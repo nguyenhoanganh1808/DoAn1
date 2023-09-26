@@ -1,6 +1,4 @@
 import 'dart:convert';
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:http/http.dart' as http;
@@ -10,7 +8,7 @@ import 'package:mime/mime.dart';
 import 'generatecaption.dart';
 
 class Home extends StatefulWidget {
-  // const Home({Key? key}) : super(key: key);
+  const Home({Key key}) : super(key: key);
 
   @override
   State<Home> createState() => _HomeState();
@@ -23,25 +21,25 @@ class _HomeState extends State<Home> {
   String resultText = 'Fetching Response...';
 
   pickimage() async {
-    var image = await picker.getImage(source: ImageSource.camera);
-    if (image == null) return null;
+    final pickedFile = await picker.pickImage(source: ImageSource.camera);
+
+    if (pickedFile == null) return;
     setState(() {
-      _image = File(image.path);
+      _image = File(pickedFile.path);
+      print(_image);
       _loading = false;
     });
-    var str = fetchResponse(_image);
-    print(str);
+    return await fetchResponse(_image);
   }
 
   pickgalleryimage() async {
-    var image = await picker.getImage(source: ImageSource.gallery);
-    if (image == null) return null;
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+    if (pickedFile == null) return;
     setState(() {
-      _image = File(image.path);
+      _image = File(pickedFile.path);
       _loading = false;
     });
-    var str = fetchResponse(_image);
-    print(str);
+    await fetchResponse(_image);
   }
 
   Future<Map<String, dynamic>> fetchResponse(File image) async {
@@ -51,7 +49,7 @@ class _HomeState extends State<Home> {
     final imageUploadRequest = http.MultipartRequest(
         'POST',
         Uri.parse(
-            'https://max-image-caption-generator-podo-sayed-dev.apps.sandbox.x8i5.p1.openshiftapps.com/model/predict'));
+            'https://max-image-caption-generator1-kaexny6fxa-uc.a.run.app/model/predict'));
     final file = await http.MultipartFile.fromPath('image', image.path,
         contentType: MediaType(mimeTypeData[0], mimeTypeData[1]));
     imageUploadRequest.fields['Text'] = mimeTypeData[1];
@@ -60,8 +58,10 @@ class _HomeState extends State<Home> {
     try {
       final streamedResponse = await imageUploadRequest.send();
       final response = await http.Response.fromStream(streamedResponse);
+      print(response.body);
       final Map<String, dynamic> responseData = json.decode(response.body);
       parseResponse(responseData);
+      //print(responseData);
       return responseData;
     } catch (e) {
       print(e);
@@ -72,21 +72,23 @@ class _HomeState extends State<Home> {
   void parseResponse(var response) {
     String r = '';
     var predictions = response['predictions'];
-    for (var prediction in predictions) {
-      var caption = prediction['caption'];
-      var probability = prediction['probability'];
-      r = r + '$caption \n\n';
+    if (predictions != null) {
+      for (var prediction in predictions) {
+        var caption = prediction['caption'];
+        //var probability = prediction['probability'];
+        r = r + '$caption \n\n';
+      }
+      setState(() {
+        resultText = r;
+      });
     }
-    setState(() {
-      resultText = r;
-    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           gradient: LinearGradient(
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
@@ -94,29 +96,29 @@ class _HomeState extends State<Home> {
               colors: [Color(0x11232526), Color(0xFF232526)]),
         ),
         child: Container(
-          padding: EdgeInsets.symmetric(horizontal: 24),
+          padding: const EdgeInsets.symmetric(horizontal: 24),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-              SizedBox(height: 40),
-              Text(
+              const SizedBox(height: 40),
+              const Text(
                 'text generator',
                 style: TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
                     fontSize: 35),
               ),
-              Text(
+              const Text(
                 'image to text generator',
                 style: TextStyle(
                     color: Colors.white,
                     fontSize: 18,
                     fontWeight: FontWeight.bold),
               ),
-              SizedBox(height: 30),
+              const SizedBox(height: 30),
               Container(
                 height: MediaQuery.of(context).size.height - 250,
-                padding: EdgeInsets.all(30),
+                padding: const EdgeInsets.all(30),
                 decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(30),
@@ -130,23 +132,23 @@ class _HomeState extends State<Home> {
                   children: <Widget>[
                     Center(
                       child: _loading
-                          ? Container(
+                          ? SizedBox(
                               width: 500,
                               child: Column(
                                 children: <Widget>[
-                                  SizedBox(
+                                  const SizedBox(
                                     height: 50,
                                   ),
-                                  Container(
+                                  SizedBox(
                                     width: 100,
                                     child: Image.asset(
                                       'assets/notepad.png',
                                     ),
                                   ),
-                                  SizedBox(
+                                  const SizedBox(
                                     height: 30,
                                   ),
-                                  Container(
+                                  SizedBox(
                                     width: MediaQuery.of(context).size.width,
                                     child: Column(
                                       children: <Widget>[
@@ -156,7 +158,7 @@ class _HomeState extends State<Home> {
                                                 context,
                                                 MaterialPageRoute(
                                                     builder: (context) =>
-                                                        GnerateLiveCaptions()));
+                                                        const GnerateLiveCaptions()));
                                           },
                                           child: Container(
                                             width: MediaQuery.of(context)
@@ -164,14 +166,14 @@ class _HomeState extends State<Home> {
                                                     .width -
                                                 180,
                                             alignment: Alignment.center,
-                                            padding: EdgeInsets.symmetric(
+                                            padding: const EdgeInsets.symmetric(
                                                 horizontal: 24, vertical: 17),
                                             decoration: BoxDecoration(
-                                              color: Color(0xFF56ab2f),
+                                              color: const Color(0xFF56ab2f),
                                               borderRadius:
                                                   BorderRadius.circular(6),
                                             ),
-                                            child: Text(
+                                            child: const Text(
                                               'Live Camera',
                                               style: TextStyle(
                                                   color: Colors.white,
@@ -182,14 +184,19 @@ class _HomeState extends State<Home> {
                                       ],
                                     ),
                                   ),
-                                  SizedBox(
+                                  const SizedBox(
                                     height: 5,
                                   ),
-                                  Container(
+                                  SizedBox(
                                     width: MediaQuery.of(context).size.width,
                                     child: Column(
                                       children: <Widget>[
                                         GestureDetector(
+                                          // onTap: () => Navigator.push(
+                                          //     context,
+                                          //     MaterialPageRoute(
+                                          //         builder: (context) =>
+                                          //             Cameraroll())),
                                           onTap: pickgalleryimage,
                                           child: Container(
                                             width: MediaQuery.of(context)
@@ -197,14 +204,14 @@ class _HomeState extends State<Home> {
                                                     .width -
                                                 180,
                                             alignment: Alignment.center,
-                                            padding: EdgeInsets.symmetric(
+                                            padding: const EdgeInsets.symmetric(
                                                 horizontal: 24, vertical: 17),
                                             decoration: BoxDecoration(
                                               color: Color(0xFF56ab2f),
                                               borderRadius:
                                                   BorderRadius.circular(6),
                                             ),
-                                            child: Text(
+                                            child: const Text(
                                               'Camera Roll',
                                               style: TextStyle(
                                                   color: Colors.white,
@@ -215,10 +222,10 @@ class _HomeState extends State<Home> {
                                       ],
                                     ),
                                   ),
-                                  SizedBox(
+                                  const SizedBox(
                                     height: 5,
                                   ),
-                                  Container(
+                                  SizedBox(
                                     width: MediaQuery.of(context).size.width,
                                     child: Column(
                                       children: <Widget>[
@@ -230,14 +237,14 @@ class _HomeState extends State<Home> {
                                                     .width -
                                                 180,
                                             alignment: Alignment.center,
-                                            padding: EdgeInsets.symmetric(
+                                            padding: const EdgeInsets.symmetric(
                                                 horizontal: 24, vertical: 17),
                                             decoration: BoxDecoration(
-                                              color: Color(0xFF56ab2f),
+                                              color: const Color(0xFF56ab2f),
                                               borderRadius:
                                                   BorderRadius.circular(6),
                                             ),
-                                            child: Text(
+                                            child: const Text(
                                               'Take a Photo',
                                               style: TextStyle(
                                                   color: Colors.white,
@@ -252,7 +259,7 @@ class _HomeState extends State<Home> {
                               ),
                             )
                           : Container(
-                              padding: EdgeInsets.only(top: 10),
+                              padding: const EdgeInsets.only(top: 10),
                               child: Column(
                                 children: <Widget>[
                                   Container(
@@ -264,22 +271,20 @@ class _HomeState extends State<Home> {
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: <Widget>[
-                                        Container(
-                                          child: IconButton(
-                                            onPressed: () {
-                                              setState(() {
-                                                _loading = true;
-                                                resultText =
-                                                    'Fetching Response...';
-                                              });
-                                            },
-                                            icon: Icon(
-                                              Icons.arrow_back_ios,
-                                            ),
-                                            color: Colors.black,
+                                        IconButton(
+                                          onPressed: () {
+                                            setState(() {
+                                              _loading = true;
+                                              resultText =
+                                                  'Fetching Response...';
+                                            });
+                                          },
+                                          icon: const Icon(
+                                            Icons.arrow_back_ios,
                                           ),
+                                          color: Colors.black,
                                         ),
-                                        Container(
+                                        SizedBox(
                                           width: MediaQuery.of(context)
                                                   .size
                                                   .width -
@@ -296,15 +301,13 @@ class _HomeState extends State<Home> {
                                       ],
                                     ),
                                   ),
-                                  SizedBox(height: 20),
-                                  Container(
-                                    child: Text(
-                                      '$resultText',
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                        color: Colors.black,
-                                        fontSize: 14,
-                                      ),
+                                  const SizedBox(height: 20),
+                                  Text(
+                                    resultText,
+                                    textAlign: TextAlign.center,
+                                    style: const TextStyle(
+                                      color: Colors.black,
+                                      fontSize: 14,
                                     ),
                                   ),
                                 ],

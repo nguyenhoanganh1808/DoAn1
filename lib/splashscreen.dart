@@ -4,7 +4,7 @@ import 'package:generatelivecaption/home.dart';
 
 // import 'package:flutter_native_splash/flutter_native_splash.dart';
 class MySplash extends StatefulWidget {
-  // const MySplash({Key? key}) : super(key: key);
+  const MySplash({Key key}) : super(key: key);
 
   @override
   State<MySplash> createState() => _MySplashState();

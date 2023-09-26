@@ -1,16 +1,16 @@
 import 'dart:async';
 import 'dart:convert';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
 import 'package:camera/camera.dart';
 import 'package:mime/mime.dart';
-import 'package:async/async.dart';
 import 'package:path_provider/path_provider.dart';
 
 class GnerateLiveCaptions extends StatefulWidget {
+  const GnerateLiveCaptions({Key key}) : super(key: key);
+
   // const GnerateLiveCaptions({Key? key}) : super(key: key);
 
   @override
@@ -50,8 +50,8 @@ class _GnerateLiveCaptionsState extends State<GnerateLiveCaptions> {
       }
       setState(() {});
       if (takephoto) {
-        const interval = const Duration(seconds: 5);
-        new Timer.periodic(interval, (Timer t) => capturePicture());
+        const interval = Duration(seconds: 5);
+        Timer.periodic(interval, (Timer t) => capturePicture());
       }
     });
   }
@@ -81,10 +81,10 @@ class _GnerateLiveCaptionsState extends State<GnerateLiveCaptions> {
     final imageUploadRequest = http.MultipartRequest(
         'POST',
         Uri.parse(
-            'https://max-image-caption-generator-podo-sayed-dev.apps.sandbox.x8i5.p1.openshiftapps.com/model/predict'));
+            'https://max-image-caption-generator1-kaexny6fxa-uc.a.run.app/model/predict'));
     final file = await http.MultipartFile.fromPath('image', image.path,
         contentType: MediaType(mimeTypeData[0], mimeTypeData[1]));
-    imageUploadRequest.fields['ext'] = mimeTypeData[1];
+    imageUploadRequest.fields['Text'] = mimeTypeData[1];
     imageUploadRequest.files.add(file);
 
     try {
@@ -102,6 +102,7 @@ class _GnerateLiveCaptionsState extends State<GnerateLiveCaptions> {
   void parseResponse(var response) {
     String r = '';
     var predictions = response['predictions'];
+    //print('predict' + predictions);
     for (var prediction in predictions) {
       var caption = prediction['caption'];
       var probability = prediction['probability'];
@@ -116,7 +117,7 @@ class _GnerateLiveCaptionsState extends State<GnerateLiveCaptions> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
@@ -131,10 +132,10 @@ class _GnerateLiveCaptionsState extends State<GnerateLiveCaptions> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Container(
-              padding: EdgeInsets.only(top: 35),
+              padding: const EdgeInsets.only(top: 35),
               child: IconButton(
                 color: Colors.white,
-                icon: Icon(Icons.arrow_back_ios),
+                icon: const Icon(Icons.arrow_back_ios),
                 onPressed: () {
                   setState(() {
                     takephoto = false;
@@ -156,35 +157,33 @@ class _GnerateLiveCaptionsState extends State<GnerateLiveCaptions> {
     var size = MediaQuery.of(context).size.width / 1.2;
     return Column(
       children: <Widget>[
-        Container(
-          child: Column(
-            children: <Widget>[
-              SizedBox(
-                height: 60,
+        Column(
+          children: <Widget>[
+            const SizedBox(
+              height: 60,
+            ),
+            SizedBox(
+              width: size,
+              height: size,
+              child: CameraPreview(controller),
+            ),
+            const SizedBox(
+              height: 40,
+            ),
+            const Text(
+              'prediction is: \n',
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.w900,
+                fontSize: 25,
               ),
-              Container(
-                width: size,
-                height: size,
-                child: CameraPreview(controller),
-              ),
-              SizedBox(
-                height: 40,
-              ),
-              Text(
-                'prediction is: \n',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.w900,
-                  fontSize: 25,
-                ),
-              ),
-              Text(
-                resultText,
-                style: TextStyle(fontSize: 16),
-                textAlign: TextAlign.center,
-              )
-            ],
-          ),
+            ),
+            Text(
+              resultText,
+              style: const TextStyle(fontSize: 16),
+              textAlign: TextAlign.center,
+            )
+          ],
         )
       ],
     );
