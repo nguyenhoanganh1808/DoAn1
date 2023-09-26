@@ -84,7 +84,7 @@ class _GnerateLiveCaptionsState extends State<GnerateLiveCaptions> {
             'https://max-image-caption-generator1-kaexny6fxa-uc.a.run.app/model/predict'));
     final file = await http.MultipartFile.fromPath('image', image.path,
         contentType: MediaType(mimeTypeData[0], mimeTypeData[1]));
-    imageUploadRequest.fields['Text'] = mimeTypeData[1];
+    imageUploadRequest.fields['ext'] = mimeTypeData[1];
     imageUploadRequest.files.add(file);
 
     try {
