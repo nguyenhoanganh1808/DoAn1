@@ -141,7 +141,7 @@ class _GnerateLiveCaptionsState extends State<GnerateLiveCaptions> {
       }
       setState(() {});
       if (takephoto) {
-        const interval = Duration(seconds: 5);
+        const interval = Duration(seconds: 3);
         Timer.periodic(interval, (Timer t) => capturePicture());
       }
     });
@@ -195,43 +195,45 @@ class _GnerateLiveCaptionsState extends State<GnerateLiveCaptions> {
   }
 
   Widget buildCameraPreview() {
-    var size = MediaQuery.of(context).size.width / 1.2;
-    return Column(
-      children: <Widget>[
-        Column(
-          children: <Widget>[
-            const SizedBox(
-              height: 60,
-            ),
-            SizedBox(
-              width: size,
-              height: size,
-              child: CameraPreview(controller),
-            ),
-            const SizedBox(
-              height: 40,
-            ),
-            const Text(
-              'prediction is: \n',
-              style: TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.w900,
-                fontSize: 25,
+    var size = MediaQuery.of(context).size.width * 0.7;
+    return SingleChildScrollView(
+      child: Column(
+        children: <Widget>[
+          Column(
+            children: <Widget>[
+              const SizedBox(
+                height: 60,
               ),
-            ),
-            _isLoadingResult
-                ? const CircularProgressIndicator()
-                : Text(
-                    resultText,
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: colors[colorIndex],
-                    ),
-                    textAlign: TextAlign.center,
-                  )
-          ],
-        )
-      ],
+              SizedBox(
+                width: size,
+                height: size,
+                child: CameraPreview(controller),
+              ),
+              const SizedBox(
+                height: 40,
+              ),
+              const Text(
+                'prediction is: \n',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w900,
+                  fontSize: 25,
+                ),
+              ),
+              _isLoadingResult
+                  ? const CircularProgressIndicator()
+                  : Text(
+                      resultText,
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: colors[colorIndex],
+                      ),
+                      textAlign: TextAlign.center,
+                    )
+            ],
+          ),
+        ],
+      ),
     );
   }
 }
