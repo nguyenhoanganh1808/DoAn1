@@ -22,7 +22,7 @@ class _GnerateLiveCaptionsState extends State<GnerateLiveCaptions> {
   bool takephoto = false;
   bool capturingInProgress = false; // Add this flag
   bool _isLoadingResult = true;
-  late Future<void> _initializeControllerFuture;
+  late Future<void> _initializeControllerFuture = Future.value();
   List colors = [Colors.red, Colors.green, Colors.yellow];
   int colorIndex = 0;
 
@@ -117,7 +117,6 @@ class _GnerateLiveCaptionsState extends State<GnerateLiveCaptions> {
   void initState() {
     super.initState();
     takephoto = true;
-
     detectCameras().then((_) {
       initializeController();
     });
@@ -133,7 +132,7 @@ class _GnerateLiveCaptionsState extends State<GnerateLiveCaptions> {
     super.dispose();
   }
 
-  void initializeController() {
+  void initializeController() async {
     controller = CameraController(cameras.first, ResolutionPreset.medium);
     _initializeControllerFuture = controller.initialize().then((_) {
       if (!mounted) {
