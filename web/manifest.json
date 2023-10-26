@@ -1,6 +1,6 @@
 {
-    "name": "generatelivecaption",
-    "short_name": "generatelivecaption",
+    "name": "Live Caption Generator",
+    "short_name": "Live Caption Generator",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
@@ -30,6 +30,6 @@
             "sizes": "512x512",
             "type": "image/png",
             "purpose": "maskable"
-        }
+        }   
     ]
 }

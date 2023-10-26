@@ -119,7 +119,7 @@ class _GnerateLiveCaptionsState extends State<GnerateLiveCaptions> {
     super.dispose();
   }
 
-  void initializeController() {
+  void initializeController() async {
     controller = CameraController(cameras.first, ResolutionPreset.medium);
     _initializeControllerFuture = controller.initialize().then((_) {
       if (!mounted) {
@@ -127,7 +127,7 @@ class _GnerateLiveCaptionsState extends State<GnerateLiveCaptions> {
       }
       setState(() {});
       if (takephoto) {
-        const interval = Duration(seconds: 5);
+        const interval = Duration(seconds: 3);
         Timer.periodic(interval, (Timer t) => capturePicture());
       }
     });
@@ -219,7 +219,7 @@ class _GnerateLiveCaptionsState extends State<GnerateLiveCaptions> {
                     textAlign: TextAlign.center,
                   )
           ],
-        )
+        ),
       ],
     );
   }
