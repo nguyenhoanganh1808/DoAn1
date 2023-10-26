@@ -51,8 +51,13 @@ dependencies:
   firebase_core: ^2.19.0
   firebase_storage: ^11.3.1
   cloud_firestore: ^4.11.0
+  flutter_launcher_icons: "^0.13.1"
 #  flutter_native_splash: ^2.1.6
-
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/Logo.png"
+  remove_alpha_ios: true
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -78,6 +83,7 @@ flutter:
   assets:
     - assets/notepad.png
     - assets/loading.gif
+    - assets/Logo.png
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
 
