@@ -34,15 +34,6 @@ class _GnerateLiveCaptionsState extends State<GnerateLiveCaptions> {
   List colors = [Colors.red, Colors.green, Colors.yellow];
   int colorIndex = 0;
 
-  getDeviceId() async {
-    final androidId = await getId();
-    if (androidId != null) {
-      deviceId = androidId;
-    } else {
-      deviceId = 'Not Android Device';
-    }
-  }
-
   Future parseResponse(var response, File image) async {
     String r = '';
     var predictions = response['predictions'];
@@ -54,31 +45,9 @@ class _GnerateLiveCaptionsState extends State<GnerateLiveCaptions> {
       r = r + '$finalCaption. \n\n';
     }
 
-    if (currentR != r) {
-      final imageId = DateTime.now().microsecondsSinceEpoch;
-
-      final imagesRef = storageRef.child('images/$imageId');
-      try {
-        await imagesRef.putFile(image);
-        final imgUrl = await imagesRef.getDownloadURL();
-        firestore
-            .collection('devices')
-            .doc(deviceId)
-            .collection('predicts')
-            .add({
-          'time': imageId,
-          'predicts': r,
-          'imageUrl': imgUrl,
-        });
-      } on FirebaseException catch (e) {
-        print(e);
-      }
-    }
-
     setState(() {
       colorIndex = (colorIndex + 1) % colors.length;
       resultText = r;
-      currentR = r;
       _isLoadingResult = false;
     });
   }
@@ -119,7 +88,7 @@ class _GnerateLiveCaptionsState extends State<GnerateLiveCaptions> {
         if (!mounted) {
           return;
         }
-        print(image.path);
+
         File imgfile = File(image.path);
         fetchResponse(imgfile);
       } catch (e) {
@@ -134,8 +103,6 @@ class _GnerateLiveCaptionsState extends State<GnerateLiveCaptions> {
   void initState() {
     super.initState();
     takephoto = true;
-
-    getDeviceId();
 
     detectCameras().then((_) {
       initializeController();
