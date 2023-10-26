@@ -1,12 +1,15 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:generatelivecaption/utils/device_info.dart';
+import 'package:generatelivecaption/utils/string_extension.dart';
 import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
 import 'package:camera/camera.dart';
 import 'package:mime/mime.dart';
-import 'dart:math';
 
 class GnerateLiveCaptions extends StatefulWidget {
   const GnerateLiveCaptions({Key? key}) : super(key: key);
@@ -16,7 +19,12 @@ class GnerateLiveCaptions extends StatefulWidget {
 }
 
 class _GnerateLiveCaptionsState extends State<GnerateLiveCaptions> {
+  final storageRef = FirebaseStorage.instance.ref();
+  final firestore = FirebaseFirestore.instance;
+  late String deviceId;
+
   String resultText = 'Fetching Response...';
+  String currentR = '';
   late List<CameraDescription> cameras;
   late CameraController controller;
   bool takephoto = false;
@@ -26,18 +34,51 @@ class _GnerateLiveCaptionsState extends State<GnerateLiveCaptions> {
   List colors = [Colors.red, Colors.green, Colors.yellow];
   int colorIndex = 0;
 
-  void parseResponse(var response) {
+  getDeviceId() async {
+    final androidId = await getId();
+    if (androidId != null) {
+      deviceId = androidId;
+    } else {
+      deviceId = 'Not Android Device';
+    }
+  }
+
+  Future parseResponse(var response, File image) async {
     String r = '';
     var predictions = response['predictions'];
     //print('predict' + predictions);
     for (var prediction in predictions) {
       var caption = prediction['caption'];
-      var probability = prediction['probability'];
-      r = r + '$caption\n\n';
+      //var probability = prediction['probability'];
+      String finalCaption = caption.toString().capitalize();
+      r = r + '$finalCaption. \n\n';
     }
+
+    if (currentR != r) {
+      final imageId = DateTime.now().microsecondsSinceEpoch;
+
+      final imagesRef = storageRef.child('images/$imageId');
+      try {
+        await imagesRef.putFile(image);
+        final imgUrl = await imagesRef.getDownloadURL();
+        firestore
+            .collection('devices')
+            .doc(deviceId)
+            .collection('predicts')
+            .add({
+          'time': imageId,
+          'predicts': r,
+          'imageUrl': imgUrl,
+        });
+      } on FirebaseException catch (e) {
+        print(e);
+      }
+    }
+
     setState(() {
       colorIndex = (colorIndex + 1) % colors.length;
       resultText = r;
+      currentR = r;
       _isLoadingResult = false;
     });
   }
@@ -59,7 +100,7 @@ class _GnerateLiveCaptionsState extends State<GnerateLiveCaptions> {
       final streamedResponse = await imageUploadRequest.send();
       final response = await http.Response.fromStream(streamedResponse);
       final Map<String, dynamic> responseData = json.decode(response.body);
-      parseResponse(responseData);
+      await parseResponse(responseData, image);
       return responseData;
     } catch (e) {
       print(e);
@@ -71,11 +112,6 @@ class _GnerateLiveCaptionsState extends State<GnerateLiveCaptions> {
     if (capturingInProgress) {
       return; // If capture is already in progress, skip this call
     }
-    // String timesteps = DateTime.now().millisecondsSinceEpoch.toString();
-    // final Directory extDir = await getApplicationDocumentsDirectory();
-    // final String dirpath = '${extDir.path}/Pictures/flutter_test';
-    // await Directory(dirpath).create(recursive: true);
-    // final String filepath = '$dirpath/$timesteps.png';
     if (takephoto) {
       try {
         await _initializeControllerFuture;
@@ -86,25 +122,6 @@ class _GnerateLiveCaptionsState extends State<GnerateLiveCaptions> {
         print(image.path);
         File imgfile = File(image.path);
         fetchResponse(imgfile);
-        // await controller.takePicture().then((_) {
-        //   if (takephoto) {
-        //     Image.file(File(filepath));
-        //     File imgfile = File(filepath);
-        //     print(filepath);
-        //     fetchResponse(imgfile);
-        //   } else {
-        //     return;
-        //   }
-        // });
-        // await Navigator.of(context).push(
-        //   MaterialPageRoute(
-        //     builder: (context) => DisplayPictureScreen(
-        //       // Pass the automatically generated path to
-        //       // the DisplayPictureScreen widget.
-        //       imagePath: image.path,
-        //     ),
-        //   ),
-        // );
       } catch (e) {
         print(e);
       } finally {
@@ -117,6 +134,9 @@ class _GnerateLiveCaptionsState extends State<GnerateLiveCaptions> {
   void initState() {
     super.initState();
     takephoto = true;
+
+    getDeviceId();
+
     detectCameras().then((_) {
       initializeController();
     });
@@ -165,74 +185,75 @@ class _GnerateLiveCaptionsState extends State<GnerateLiveCaptions> {
                     ],
                   ),
                 ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Container(
-                      padding: const EdgeInsets.only(top: 35),
-                      child: IconButton(
-                        color: Colors.white,
-                        icon: const Icon(Icons.arrow_back_ios),
-                        onPressed: () {
-                          setState(() {
-                            takephoto = false;
-                          });
-                          Navigator.pop(context);
-                        },
+                child: Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Container(
+                        padding: const EdgeInsets.only(top: 35),
+                        child: IconButton(
+                          color: Colors.white,
+                          icon: const Icon(Icons.arrow_back_ios),
+                          onPressed: () {
+                            setState(() {
+                              takephoto = false;
+                            });
+                            Navigator.pop(context);
+                          },
+                        ),
                       ),
-                    ),
-                    (controller.value.isInitialized)
-                        ? Center(child: buildCameraPreview())
-                        : Container()
-                  ],
+                      (controller.value.isInitialized)
+                          ? Center(child: buildCameraPreview())
+                          : Container()
+                    ],
+                  ),
                 ),
               ),
             );
+          } else {
+            return const CircularProgressIndicator();
           }
-          return const CircularProgressIndicator();
         });
   }
 
   Widget buildCameraPreview() {
-    var size = MediaQuery.of(context).size.width * 0.7;
-    return SingleChildScrollView(
-      child: Column(
-        children: <Widget>[
-          Column(
-            children: <Widget>[
-              const SizedBox(
-                height: 60,
+    var size = MediaQuery.of(context).size.width / 1.2;
+    return Column(
+      children: <Widget>[
+        Column(
+          children: <Widget>[
+            const SizedBox(
+              height: 20,
+            ),
+            SizedBox(
+              width: size,
+              height: size,
+              child: CameraPreview(controller),
+            ),
+            const SizedBox(
+              height: 20,
+            ),
+            const Text(
+              'prediction is: \n',
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.w900,
+                fontSize: 25,
               ),
-              SizedBox(
-                width: size,
-                height: size,
-                child: CameraPreview(controller),
-              ),
-              const SizedBox(
-                height: 40,
-              ),
-              const Text(
-                'prediction is: \n',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.w900,
-                  fontSize: 25,
-                ),
-              ),
-              _isLoadingResult
-                  ? const CircularProgressIndicator()
-                  : Text(
-                      resultText,
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: colors[colorIndex],
-                      ),
-                      textAlign: TextAlign.center,
-                    )
-            ],
-          ),
-        ],
-      ),
+            ),
+            _isLoadingResult
+                ? const CircularProgressIndicator()
+                : Text(
+                    resultText,
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: colors[colorIndex],
+                    ),
+                    textAlign: TextAlign.center,
+                  )
+          ],
+        ),
+      ],
     );
   }
 }

@@ -1,12 +1,16 @@
 import 'dart:convert';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:generatelivecaption/pages/history.dart';
+import 'package:generatelivecaption/utils/device_info.dart';
 import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mime/mime.dart';
 import 'generatecaption.dart';
-import 'utils/string_extension.dart';
+import '../utils/string_extension.dart';
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -16,11 +20,31 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> with TickerProviderStateMixin {
+  final storageRef = FirebaseStorage.instance.ref();
+  final firestore = FirebaseFirestore.instance;
+
   bool _loading = true;
   bool _isLoadingResult = true;
   late File _image;
   final picker = ImagePicker();
   String resultText = 'Fetching Response...';
+  late String deviceId;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getDeviceId();
+  }
+
+  getDeviceId() async {
+    final androidId = await getId();
+    if (androidId != null) {
+      deviceId = androidId;
+    } else {
+      deviceId = 'Not Android Device';
+    }
+  }
 
   Future pickimage() async {
     final pickedFile = await picker.pickImage(source: ImageSource.camera);
@@ -45,28 +69,27 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
               actions: [
                 TextButton(
                     onPressed: () {
-                      Navigator.pop(ctx, 'OK');
-                    },
-                    child: const Text('OK')),
-                TextButton(
-                    onPressed: () {
                       // Navigator.pop(ctx, 'Go back');
                       Navigator.pushReplacement(ctx,
                           MaterialPageRoute(builder: (ctx) => const Home()));
                     },
                     child: const Text('Go Back')),
+                TextButton(
+                    onPressed: () {
+                      Navigator.pop(ctx, 'Try again');
+                    },
+                    child: const Text('Try again')),
               ],
             );
           }).then((value) async {
-        if (value == 'OK') {
+        if (value == 'Try again') {
           responseData = await fetchResponse(_image);
         } else {
           responseData.clear();
         }
       });
     }
-    parseResponse(responseData);
-    print(responseData);
+    await parseResponse(responseData);
   }
 
   pickgalleryimage() async {
@@ -81,6 +104,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
   }
 
   Future<Map<String, dynamic>> fetchResponse(File image) async {
+    print(image);
     final mimeTypeData =
         lookupMimeType(image.path, headerBytes: [0xFF, 0xD8])!.split('/');
 
@@ -105,7 +129,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
     }
   }
 
-  void parseResponse(var response) {
+  Future parseResponse(var response) async {
     String r = '';
     var predictions = response['predictions'];
     if (predictions != null) {
@@ -113,7 +137,25 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
         var caption = prediction['caption'];
         String finalCaption = caption.toString().capitalize();
         var probability = prediction['probability'];
-        r = r + '$finalCaption: $probability \n\n';
+        r = r + '$finalCaption. \n\n';
+      }
+      final imageId = DateTime.now().microsecondsSinceEpoch;
+
+      final imagesRef = storageRef.child('images/$imageId');
+      try {
+        await imagesRef.putFile(_image);
+        final imgUrl = await imagesRef.getDownloadURL();
+        firestore
+            .collection('devices')
+            .doc(deviceId)
+            .collection('predicts')
+            .add({
+          'time': imageId,
+          'predicts': r,
+          'imageUrl': imgUrl,
+        });
+      } on FirebaseException catch (e) {
+        print(e);
       }
       setState(() {
         _isLoadingResult = false;
@@ -156,7 +198,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
               const SizedBox(height: 30),
               Container(
                 height: MediaQuery.of(context).size.height - 250,
-                padding: const EdgeInsets.all(30),
+                padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(30),
@@ -174,8 +216,25 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                               width: 500,
                               child: Column(
                                 children: <Widget>[
-                                  const SizedBox(
-                                    height: 50,
+                                  Align(
+                                    alignment: Alignment.topRight,
+                                    child: Material(
+                                      color: Colors.transparent,
+                                      shape: const CircleBorder(),
+                                      clipBehavior: Clip.hardEdge,
+                                      child: IconButton(
+                                        iconSize: 32,
+                                        icon: const Icon(Icons.history),
+                                        onPressed: () {
+                                          Navigator.of(context).push(
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  History(deviceId: deviceId),
+                                            ),
+                                          );
+                                        },
+                                      ),
+                                    ),
                                   ),
                                   SizedBox(
                                     width: 100,
