@@ -32,7 +32,6 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     getDeviceId();
   }
@@ -104,17 +103,16 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
   }
 
   Future<Map<String, dynamic>> fetchResponse(File image) async {
-    print(image);
-    var x =
-        '/data/user/0/com.example.generatelivecaption/cache/efc0287e-620b-42cc-87db-de7b4000f57e295018784529051407.jpg';
+    // var x =
+    //     '/data/user/0/com.example.generatelivecaption/cache/efc0287e-620b-42cc-87db-de7b4000f57e295018784529051407.jpg';
     final mimeTypeData =
-        lookupMimeType(x, headerBytes: [0xFF, 0xD8])!.split('/');
+        lookupMimeType(image.path, headerBytes: [0xFF, 0xD8])!.split('/');
 
     final imageUploadRequest = http.MultipartRequest(
         'POST',
         Uri.parse(
             'https://max-image-caption-generator1-kaexny6fxa-uc.a.run.app/model/predict'));
-    final file = await http.MultipartFile.fromPath('image', x,
+    final file = await http.MultipartFile.fromPath('image', image.path,
         contentType: MediaType(mimeTypeData[0], mimeTypeData[1]));
     imageUploadRequest.fields['ext'] = mimeTypeData[1];
     imageUploadRequest.files.add(file);
@@ -123,7 +121,8 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
       final streamedResponse = await imageUploadRequest.send();
       var response = await http.Response.fromStream(streamedResponse);
 
-      final Map<String, dynamic> responseData = json.decode(response.body);
+      Map<String, dynamic> responseData = {};
+      responseData = json.decode(response.body);
 
       return responseData;
     } catch (e) {
@@ -138,7 +137,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
       for (var prediction in predictions) {
         var caption = prediction['caption'];
         String finalCaption = caption.toString().capitalize();
-        var probability = prediction['probability'];
+        // var probability = prediction['probability'];
         r = r + '$finalCaption. \n\n';
       }
       final imageId = DateTime.now().microsecondsSinceEpoch;

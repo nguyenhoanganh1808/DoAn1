@@ -32,6 +32,11 @@ class History extends StatelessWidget {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           }
+          if (!snapshot.hasData) {
+            return Center(
+              child: Text('Chưa có ảnh'),
+            );
+          }
           var data = snapshot.data!.docs;
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,

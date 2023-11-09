@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:generatelivecaption/utils/device_info.dart';
 import 'package:generatelivecaption/utils/string_extension.dart';
 import 'dart:io';
 import 'package:http/http.dart' as http;
@@ -72,7 +71,7 @@ class _GnerateLiveCaptionsState extends State<GnerateLiveCaptions> {
       await parseResponse(responseData, image);
       return responseData;
     } catch (e) {
-      print(e);
+      // print(e);
       return {};
     }
   }
