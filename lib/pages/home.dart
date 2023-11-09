@@ -105,6 +105,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
   Future<Map<String, dynamic>> fetchResponse(File image) async {
     // var x =
     //     '/data/user/0/com.example.generatelivecaption/cache/efc0287e-620b-42cc-87db-de7b4000f57e295018784529051407.jpg';
+    print(image);
     final mimeTypeData =
         lookupMimeType(image.path, headerBytes: [0xFF, 0xD8])!.split('/');
 

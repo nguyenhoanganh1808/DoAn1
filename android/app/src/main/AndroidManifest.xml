@@ -2,9 +2,9 @@
     package="com.example.generatelivecaption">
     <uses-permission android:name="android.permission.INTERNET" />
    <application
-        android:label="generatelivecaption"
+        android:label="Live Caption Generator"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/launcher_icon"
         android:usesCleartextTraffic="true"
         android:requestLegacyExternalStorage="true"
         >

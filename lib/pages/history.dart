@@ -14,6 +14,7 @@ class History extends StatelessWidget {
         firestore.collection('devices').doc(deviceId).collection('predicts');
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Color(0xFF56ab2f),
         leading: IconButton(
           onPressed: () {
             Navigator.pop(context);
@@ -21,14 +22,16 @@ class History extends StatelessWidget {
           icon: const Icon(
             Icons.arrow_back_ios,
           ),
-          color: Colors.black,
+          color: Colors.white,
         ),
         title: const Text('History'),
+        centerTitle: true,
       ),
       body: FutureBuilder<QuerySnapshot>(
         future: predictsRef.orderBy('time', descending: true).get(),
         builder: (context, snapshot) {
           print(deviceId);
+
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           }
@@ -64,8 +67,8 @@ class History extends StatelessWidget {
                             child: Container(
                               height: 200,
                               decoration: BoxDecoration(
-                                border:
-                                    Border.all(width: 2, color: Colors.blue),
+                                border: Border.all(
+                                    width: 2, color: Color(0xFF56ab2f)),
                               ),
                               margin: const EdgeInsets.all(20),
                               child: FadeInImage.assetNetwork(
