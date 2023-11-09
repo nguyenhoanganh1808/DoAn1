@@ -11,7 +11,9 @@ import 'package:camera/camera.dart';
 import 'package:mime/mime.dart';
 
 class GnerateLiveCaptions extends StatefulWidget {
-  const GnerateLiveCaptions({Key? key}) : super(key: key);
+  const GnerateLiveCaptions({Key? key, required this.camera}) : super(key: key);
+
+  final CameraDescription camera;
 
   @override
   State<GnerateLiveCaptions> createState() => _GnerateLiveCaptionsState();
@@ -24,12 +26,11 @@ class _GnerateLiveCaptionsState extends State<GnerateLiveCaptions> {
 
   String resultText = 'Fetching Response...';
   String currentR = '';
-  late List<CameraDescription> cameras;
+  late Future<void> _initializeControllerFuture;
   late CameraController controller;
   bool takephoto = false;
   bool capturingInProgress = false; // Add this flag
   bool _isLoadingResult = true;
-  late Future<void> _initializeControllerFuture = Future.value();
   List colors = [Colors.red, Colors.green, Colors.yellow];
   int colorIndex = 0;
 
@@ -82,7 +83,7 @@ class _GnerateLiveCaptionsState extends State<GnerateLiveCaptions> {
     }
     if (takephoto) {
       try {
-        await _initializeControllerFuture;
+        // await _initializeControllerFuture;
         final image = await controller.takePicture();
         if (!mounted) {
           return;
@@ -103,13 +104,7 @@ class _GnerateLiveCaptionsState extends State<GnerateLiveCaptions> {
     super.initState();
     takephoto = true;
 
-    detectCameras().then((_) {
-      initializeController();
-    });
-  }
-
-  Future<void> detectCameras() async {
-    cameras = await availableCameras();
+    initializeController();
   }
 
   @override
@@ -119,7 +114,7 @@ class _GnerateLiveCaptionsState extends State<GnerateLiveCaptions> {
   }
 
   void initializeController() async {
-    controller = CameraController(cameras.first, ResolutionPreset.medium);
+    controller = CameraController(widget.camera, ResolutionPreset.medium);
     _initializeControllerFuture = controller.initialize().then((_) {
       if (!mounted) {
         return;
@@ -134,93 +129,94 @@ class _GnerateLiveCaptionsState extends State<GnerateLiveCaptions> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<void>(
-        future: _initializeControllerFuture,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.done) {
-            return Scaffold(
-              body: Container(
-                decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    stops: [0.004, 1],
-                    colors: [
-                      Color(0x11232526),
-                      Color(0xFF232526),
-                    ],
-                  ),
-                ),
-                child: Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Container(
-                        padding: const EdgeInsets.only(top: 35),
-                        child: IconButton(
-                          color: Colors.white,
-                          icon: const Icon(Icons.arrow_back_ios),
-                          onPressed: () {
-                            setState(() {
-                              takephoto = false;
-                            });
-                            Navigator.pop(context);
-                          },
-                        ),
-                      ),
-                      (controller.value.isInitialized)
-                          ? Center(child: buildCameraPreview())
-                          : Container()
-                    ],
-                  ),
+    return Scaffold(
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            stops: [0.004, 1],
+            colors: [
+              Color(0x11232526),
+              Color(0xFF232526),
+            ],
+          ),
+        ),
+        child: Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Container(
+                padding: const EdgeInsets.only(top: 35),
+                child: IconButton(
+                  color: Colors.white,
+                  icon: const Icon(Icons.arrow_back_ios),
+                  onPressed: () {
+                    setState(() {
+                      takephoto = false;
+                    });
+                    Navigator.pop(context);
+                  },
                 ),
               ),
-            );
-          } else {
-            return const CircularProgressIndicator();
-          }
-        });
+              (controller.value.isInitialized)
+                  ? Center(child: buildCameraPreview())
+                  : const CircularProgressIndicator()
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   Widget buildCameraPreview() {
     var size = MediaQuery.of(context).size.width / 1.2;
-    return Column(
-      children: <Widget>[
-        Column(
-          children: <Widget>[
-            const SizedBox(
-              height: 20,
-            ),
-            SizedBox(
-              width: size,
-              height: size,
-              child: CameraPreview(controller),
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            const Text(
-              'prediction is: \n',
-              style: TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.w900,
-                fontSize: 25,
-              ),
-            ),
-            _isLoadingResult
-                ? const CircularProgressIndicator()
-                : Text(
-                    resultText,
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: colors[colorIndex],
+
+    return FutureBuilder(
+        future: _initializeControllerFuture,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.done) {
+            return Column(
+              children: <Widget>[
+                Column(
+                  children: <Widget>[
+                    const SizedBox(
+                      height: 20,
                     ),
-                    textAlign: TextAlign.center,
-                  )
-          ],
-        ),
-      ],
-    );
+                    SizedBox(
+                      width: size,
+                      height: size,
+                      child: CameraPreview(controller),
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    const Text(
+                      'prediction is: \n',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w900,
+                        fontSize: 25,
+                      ),
+                    ),
+                    _isLoadingResult
+                        ? const CircularProgressIndicator()
+                        : Text(
+                            resultText,
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: colors[colorIndex],
+                            ),
+                            textAlign: TextAlign.center,
+                          )
+                  ],
+                ),
+              ],
+            );
+          } else {
+            return CircularProgressIndicator();
+          }
+        });
   }
 }
 

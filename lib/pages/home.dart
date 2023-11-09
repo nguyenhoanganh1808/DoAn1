@@ -1,7 +1,9 @@
 import 'dart:convert';
+import 'package:camera/camera.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:generatelivecaption/pages/aboutapp.dart';
 import 'package:generatelivecaption/pages/history.dart';
 import 'package:generatelivecaption/utils/device_info.dart';
 import 'dart:io';
@@ -13,7 +15,9 @@ import 'generatecaption.dart';
 import '../utils/string_extension.dart';
 
 class Home extends StatefulWidget {
-  const Home({Key? key}) : super(key: key);
+  const Home({Key? key, required this.camera}) : super(key: key);
+
+  final CameraDescription camera;
 
   @override
   State<Home> createState() => _HomeState();
@@ -69,8 +73,12 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                 TextButton(
                     onPressed: () {
                       // Navigator.pop(ctx, 'Go back');
-                      Navigator.pushReplacement(ctx,
-                          MaterialPageRoute(builder: (ctx) => const Home()));
+                      Navigator.pushReplacement(
+                          ctx,
+                          MaterialPageRoute(
+                              builder: (ctx) => Home(
+                                    camera: widget.camera,
+                                  )));
                     },
                     child: const Text('Go Back')),
                 TextButton(
@@ -180,26 +188,30 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 24),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
+            // crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
               const SizedBox(height: 40),
-              const Text(
-                'text generator',
-                style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 35),
-              ),
-              const Text(
-                'image to text generator',
-                style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold),
+              const Column(
+                children: [
+                  Text(
+                    'text generator',
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 35),
+                  ),
+                  Text(
+                    'image to text generator',
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold),
+                  ),
+                ],
               ),
               const SizedBox(height: 30),
               Container(
-                height: MediaQuery.of(context).size.height - 250,
+                height: MediaQuery.of(context).size.height - 200,
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
                     color: Colors.white,
@@ -225,7 +237,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                                       shape: const CircleBorder(),
                                       clipBehavior: Clip.hardEdge,
                                       child: IconButton(
-                                        iconSize: 32,
+                                        iconSize: 40,
                                         icon: const Icon(Icons.history),
                                         onPressed: () {
                                           Navigator.of(context).push(
@@ -257,7 +269,9 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                                                 context,
                                                 MaterialPageRoute(
                                                     builder: (context) =>
-                                                        const GnerateLiveCaptions()));
+                                                        GnerateLiveCaptions(
+                                                          camera: widget.camera,
+                                                        )));
                                           },
                                           child: Container(
                                             width: MediaQuery.of(context)
@@ -306,7 +320,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                                             padding: const EdgeInsets.symmetric(
                                                 horizontal: 24, vertical: 17),
                                             decoration: BoxDecoration(
-                                              color: Color(0xFF56ab2f),
+                                              color: const Color(0xFF56ab2f),
                                               borderRadius:
                                                   BorderRadius.circular(6),
                                             ),
@@ -352,6 +366,34 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                                           ),
                                         ),
                                       ],
+                                    ),
+                                  ),
+                                  const SizedBox(
+                                    height: 5,
+                                  ),
+                                  GestureDetector(
+                                    onTap: () {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  AboutApp()));
+                                    },
+                                    child: Container(
+                                      width: MediaQuery.of(context).size.width -
+                                          180,
+                                      alignment: Alignment.center,
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 24, vertical: 17),
+                                      decoration: BoxDecoration(
+                                        color: const Color(0xFF56ab2f),
+                                        borderRadius: BorderRadius.circular(6),
+                                      ),
+                                      child: const Text(
+                                        'About App',
+                                        style: TextStyle(
+                                            color: Colors.white, fontSize: 18),
+                                      ),
                                     ),
                                   ),
                                 ],

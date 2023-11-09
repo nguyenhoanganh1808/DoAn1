@@ -14,7 +14,7 @@ class History extends StatelessWidget {
         firestore.collection('devices').doc(deviceId).collection('predicts');
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color(0xFF56ab2f),
+        backgroundColor: const Color(0xFF56ab2f),
         leading: IconButton(
           onPressed: () {
             Navigator.pop(context);
@@ -36,7 +36,7 @@ class History extends StatelessWidget {
             return const Center(child: CircularProgressIndicator());
           }
           if (!snapshot.hasData) {
-            return Center(
+            return const Center(
               child: Text('Chưa có ảnh'),
             );
           }
@@ -68,7 +68,7 @@ class History extends StatelessWidget {
                               height: 200,
                               decoration: BoxDecoration(
                                 border: Border.all(
-                                    width: 2, color: Color(0xFF56ab2f)),
+                                    width: 2, color: const Color(0xFF56ab2f)),
                               ),
                               margin: const EdgeInsets.all(20),
                               child: FadeInImage.assetNetwork(
