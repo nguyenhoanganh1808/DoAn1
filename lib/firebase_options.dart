@@ -70,6 +70,6 @@ class DefaultFirebaseOptions {
     messagingSenderId: '798992647445',
     projectId: 'generate-live-caption-ce788',
     storageBucket: 'generate-live-caption-ce788.appspot.com',
-    iosBundleId: 'com.example.generatelivecaption',
+    iosBundleId: 'com.ab.generatelivecaption',
   );
 }

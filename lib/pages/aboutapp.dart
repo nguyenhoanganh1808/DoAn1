@@ -45,29 +45,38 @@ class AboutApp extends StatelessWidget {
       fontSize: 16,
     );
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.green,
+        centerTitle: true,
+        leading: IconButton(
+          onPressed: () => Navigator.pop(context),
+          icon: const Icon(Icons.arrow_back_ios),
+        ),
+        title: Text('About App'),
+      ),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
           child: SafeArea(
             child: Column(
               children: [
-                const Row(
-                  children: [
-                    Icon(
-                      Icons.info_outline_rounded,
-                      size: 40,
-                    ),
-                    Text(
-                      'About App',
-                      style:
-                          TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
-                    ),
-                  ],
-                ),
+                // const Row(
+                //   children: [
+                //     Icon(
+                //       Icons.info_outline_rounded,
+                //       size: 40,
+                //     ),
+                //     Text(
+                //       'About App',
+                //       style:
+                //           TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+                //     ),
+                //   ],
+                // ),
                 Container(
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(30),
-                      color: const Color.fromARGB(255, 104, 175, 234)),
+                      color: Color.fromARGB(255, 104, 234, 154)),
                   height: 180,
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -128,6 +137,7 @@ class AboutApp extends StatelessWidget {
                 ),
                 ElevatedButton(
                     style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color.fromARGB(255, 107, 200, 110),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(20),
                       ),

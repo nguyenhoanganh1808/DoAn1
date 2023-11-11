@@ -1,4 +1,4 @@
-package com.example.generatelivecaption
+package com.ab.generatelivecaption
 
 import io.flutter.embedding.android.FlutterActivity
 

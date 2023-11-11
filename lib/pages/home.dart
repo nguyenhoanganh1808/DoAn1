@@ -112,7 +112,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
 
   Future<Map<String, dynamic>> fetchResponse(File image) async {
     // var x =
-    //     '/data/user/0/com.example.generatelivecaption/cache/efc0287e-620b-42cc-87db-de7b4000f57e295018784529051407.jpg';
+    //     '/data/user/0/com.ab.generatelivecaption/cache/efc0287e-620b-42cc-87db-de7b4000f57e295018784529051407.jpg';
     print(image);
     final mimeTypeData =
         lookupMimeType(image.path, headerBytes: [0xFF, 0xD8])!.split('/');
@@ -377,7 +377,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                                           context,
                                           MaterialPageRoute(
                                               builder: (context) =>
-                                                  AboutApp()));
+                                                  const AboutApp()));
                                     },
                                     child: Container(
                                       width: MediaQuery.of(context).size.width -

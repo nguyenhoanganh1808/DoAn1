@@ -10,6 +10,9 @@ class Help extends StatelessWidget {
         title: const Text('User Guide'),
         centerTitle: true,
         backgroundColor: Colors.green,
+        leading: IconButton(
+            onPressed: () => Navigator.pop(context),
+            icon: const Icon(Icons.arrow_back_ios)),
       ),
       body: Container(
         margin: const EdgeInsets.symmetric(horizontal: 15),
