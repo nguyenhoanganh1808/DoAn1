@@ -251,7 +251,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                                     ),
                                   ),
                                   SizedBox(
-                                    width: 100,
+                                    width: 101,
                                     child: Image.asset(
                                       'assets/notepad.png',
                                     ),
