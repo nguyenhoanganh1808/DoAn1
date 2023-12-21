@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 
 class ImageDisplay extends StatelessWidget {
@@ -23,19 +25,22 @@ class ImageDisplay extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
               const SizedBox(height: 40),
-              const Text(
+              Text(
                 'text generator',
                 style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 35),
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 35,
+                ),
+                textScaleFactor: ScaleSize.textScaleFactor(context),
               ),
-              const Text(
+              Text(
                 'image to text generator',
                 style: TextStyle(
                     color: Colors.white,
                     fontSize: 18,
                     fontWeight: FontWeight.bold),
+                textScaleFactor: ScaleSize.textScaleFactor(context),
               ),
               const SizedBox(height: 30),
               Container(
@@ -96,6 +101,8 @@ class ImageDisplay extends StatelessWidget {
                                 color: Colors.black,
                                 fontSize: 14,
                               ),
+                              textScaleFactor:
+                                  ScaleSize.textScaleFactor(context),
                             ),
                           ],
                         ),
@@ -109,5 +116,14 @@ class ImageDisplay extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+class ScaleSize {
+  static double textScaleFactor(BuildContext context,
+      {double maxTextScaleFactor = 2}) {
+    final width = MediaQuery.of(context).size.width;
+    double val = (width / 1400) * maxTextScaleFactor;
+    return max(1, min(val, maxTextScaleFactor));
   }
 }

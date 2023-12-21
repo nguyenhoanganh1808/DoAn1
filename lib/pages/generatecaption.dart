@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
@@ -9,6 +10,15 @@ import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
 import 'package:camera/camera.dart';
 import 'package:mime/mime.dart';
+
+class ScaleSize {
+  static double textScaleFactor(BuildContext context,
+      {double maxTextScaleFactor = 2}) {
+    final width = MediaQuery.of(context).size.width;
+    double val = (width / 1400) * maxTextScaleFactor;
+    return max(1, min(val, maxTextScaleFactor));
+  }
+}
 
 class GnerateLiveCaptions extends StatefulWidget {
   const GnerateLiveCaptions({Key? key, required this.camera}) : super(key: key);
@@ -42,7 +52,7 @@ class _GnerateLiveCaptionsState extends State<GnerateLiveCaptions> {
       var caption = prediction['caption'];
       //var probability = prediction['probability'];
       String finalCaption = caption.toString().capitalize();
-      r = r + '$finalCaption. \n\n';
+      r = r + '$finalCaption \n\n';
     }
 
     setState(() {
@@ -114,7 +124,11 @@ class _GnerateLiveCaptionsState extends State<GnerateLiveCaptions> {
   }
 
   void initializeController() async {
-    controller = CameraController(widget.camera, ResolutionPreset.medium);
+    controller = CameraController(
+      widget.camera,
+      ResolutionPreset.medium,
+    );
+
     _initializeControllerFuture = controller.initialize().then((_) {
       if (!mounted) {
         return;
@@ -124,6 +138,7 @@ class _GnerateLiveCaptionsState extends State<GnerateLiveCaptions> {
         const interval = Duration(seconds: 3);
         Timer.periodic(interval, (Timer t) => capturePicture());
       }
+      controller.setFlashMode(FlashMode.off);
     });
   }
 
@@ -193,13 +208,14 @@ class _GnerateLiveCaptionsState extends State<GnerateLiveCaptions> {
             const SizedBox(
               height: 20,
             ),
-            const Text(
+            Text(
               'prediction is: \n',
               style: TextStyle(
                 color: Colors.white,
                 fontWeight: FontWeight.w900,
                 fontSize: 25,
               ),
+              textScaleFactor: ScaleSize.textScaleFactor(context),
             ),
             _isLoadingResult
                 ? const CircularProgressIndicator()
@@ -209,6 +225,7 @@ class _GnerateLiveCaptionsState extends State<GnerateLiveCaptions> {
                       fontSize: 16,
                       color: colors[colorIndex],
                     ),
+                    textScaleFactor: ScaleSize.textScaleFactor(context),
                     textAlign: TextAlign.center,
                   )
           ],

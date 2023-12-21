@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:math';
 import 'package:camera/camera.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -21,6 +22,15 @@ class Home extends StatefulWidget {
 
   @override
   State<Home> createState() => _HomeState();
+}
+
+class ScaleSize {
+  static double textScaleFactor(BuildContext context,
+      {double maxTextScaleFactor = 2}) {
+    final width = MediaQuery.of(context).size.width;
+    double val = (width / 1400) * maxTextScaleFactor;
+    return max(1, min(val, maxTextScaleFactor));
+  }
 }
 
 class _HomeState extends State<Home> with TickerProviderStateMixin {
@@ -113,7 +123,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
   Future<Map<String, dynamic>> fetchResponse(File image) async {
     // var x =
     //     '/data/user/0/com.ab.generatelivecaption/cache/efc0287e-620b-42cc-87db-de7b4000f57e295018784529051407.jpg';
-    print(image);
+
     final mimeTypeData =
         lookupMimeType(image.path, headerBytes: [0xFF, 0xD8])!.split('/');
 
@@ -191,25 +201,29 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
             // crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
               const SizedBox(height: 40),
-              const Column(
+              Column(
                 children: [
                   Text(
                     'text generator',
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 35),
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 35,
+                      overflow: TextOverflow.clip,
+                    ),
+                    textScaleFactor: ScaleSize.textScaleFactor(context),
                   ),
                   Text(
                     'image to text generator',
-                    style: TextStyle(
+                    style: const TextStyle(
                         color: Colors.white,
                         fontSize: 18,
                         fontWeight: FontWeight.bold),
+                    textScaleFactor: ScaleSize.textScaleFactor(context),
                   ),
                 ],
               ),
-              const SizedBox(height: 30),
+              const SizedBox(height: 20),
               Container(
                 height: MediaQuery.of(context).size.height - 200,
                 padding: const EdgeInsets.all(20),
@@ -286,11 +300,14 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                                               borderRadius:
                                                   BorderRadius.circular(6),
                                             ),
-                                            child: const Text(
+                                            child: Text(
                                               'Live Camera',
                                               style: TextStyle(
                                                   color: Colors.white,
                                                   fontSize: 18),
+                                              textScaleFactor:
+                                                  ScaleSize.textScaleFactor(
+                                                      context),
                                             ),
                                           ),
                                         ),
@@ -324,11 +341,14 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                                               borderRadius:
                                                   BorderRadius.circular(6),
                                             ),
-                                            child: const Text(
+                                            child: Text(
                                               'Camera Roll',
                                               style: TextStyle(
                                                   color: Colors.white,
                                                   fontSize: 18),
+                                              textScaleFactor:
+                                                  ScaleSize.textScaleFactor(
+                                                      context),
                                             ),
                                           ),
                                         ),
@@ -357,11 +377,14 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                                               borderRadius:
                                                   BorderRadius.circular(6),
                                             ),
-                                            child: const Text(
+                                            child: Text(
                                               'Take a Photo',
                                               style: TextStyle(
                                                   color: Colors.white,
                                                   fontSize: 18),
+                                              textScaleFactor:
+                                                  ScaleSize.textScaleFactor(
+                                                      context),
                                             ),
                                           ),
                                         ),
@@ -389,10 +412,12 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                                         color: const Color(0xFF56ab2f),
                                         borderRadius: BorderRadius.circular(6),
                                       ),
-                                      child: const Text(
+                                      child: Text(
                                         'About App',
                                         style: TextStyle(
                                             color: Colors.white, fontSize: 18),
+                                        textScaleFactor:
+                                            ScaleSize.textScaleFactor(context),
                                       ),
                                     ),
                                   ),
@@ -453,6 +478,9 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                                             color: Colors.black,
                                             fontSize: 14,
                                           ),
+                                          textScaleFactor:
+                                              ScaleSize.textScaleFactor(
+                                                  context),
                                         ),
                                 ],
                               ),

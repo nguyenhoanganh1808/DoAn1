@@ -1,5 +1,16 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:generatelivecaption/pages/help.dart';
+
+class ScaleSize {
+  static double textScaleFactor(BuildContext context,
+      {double maxTextScaleFactor = 2}) {
+    final width = MediaQuery.of(context).size.width;
+    double val = (width / 1400) * maxTextScaleFactor;
+    return max(1, min(val, maxTextScaleFactor));
+  }
+}
 
 class AboutApp extends StatelessWidget {
   const AboutApp({super.key});
@@ -19,6 +30,7 @@ class AboutApp extends StatelessWidget {
                 title,
                 style:
                     const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                textScaleFactor: ScaleSize.textScaleFactor(context),
               ),
             ),
             const SizedBox(
@@ -32,6 +44,7 @@ class AboutApp extends StatelessWidget {
                 style: const TextStyle(
                   fontSize: 16,
                 ),
+                textScaleFactor: ScaleSize.textScaleFactor(context),
               ),
             ),
           ],
@@ -52,7 +65,7 @@ class AboutApp extends StatelessWidget {
           onPressed: () => Navigator.pop(context),
           icon: const Icon(Icons.arrow_back_ios),
         ),
-        title: Text('About App'),
+        title: const Text('About App'),
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -86,13 +99,17 @@ class AboutApp extends StatelessWidget {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text('App Name', style: title),
-                            const SizedBox(
-                              width: 50,
+                            Text(
+                              'App Name',
+                              style: title,
+                              textScaleFactor:
+                                  ScaleSize.textScaleFactor(context),
                             ),
                             Text(
                               'Live Caption Generator',
                               style: normalText,
+                              textScaleFactor:
+                                  ScaleSize.textScaleFactor(context),
                             ),
                           ],
                         ),
@@ -105,6 +122,8 @@ class AboutApp extends StatelessWidget {
                             Text(
                               'Version',
                               style: title,
+                              textScaleFactor:
+                                  ScaleSize.textScaleFactor(context),
                             ),
                             const SizedBox(
                               width: 50,
@@ -112,6 +131,8 @@ class AboutApp extends StatelessWidget {
                             Text(
                               '1.0.0',
                               style: normalText,
+                              textScaleFactor:
+                                  ScaleSize.textScaleFactor(context),
                             ),
                           ],
                         )
@@ -148,7 +169,7 @@ class AboutApp extends StatelessWidget {
                           builder: (context) => const Help()));
                     },
                     child: SizedBox(
-                      width: 250,
+                      width: MediaQuery.of(context).size.width * 0.5,
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -156,7 +177,11 @@ class AboutApp extends StatelessWidget {
                             Icons.question_mark,
                             size: 35,
                           ),
-                          Text('Help', style: title),
+                          Text(
+                            'Help',
+                            style: title,
+                            textScaleFactor: ScaleSize.textScaleFactor(context),
+                          ),
                         ],
                       ),
                     ))

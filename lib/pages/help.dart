@@ -1,4 +1,15 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
+
+class ScaleSize {
+  static double textScaleFactor(BuildContext context,
+      {double maxTextScaleFactor = 2}) {
+    final width = MediaQuery.of(context).size.width;
+    double val = (width / 1400) * maxTextScaleFactor;
+    return max(1, min(val, maxTextScaleFactor));
+  }
+}
 
 class Help extends StatelessWidget {
   const Help({super.key});
@@ -16,7 +27,7 @@ class Help extends StatelessWidget {
       ),
       body: Container(
         margin: const EdgeInsets.symmetric(horizontal: 15),
-        child: const Column(
+        child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             SizedBox(
@@ -25,12 +36,14 @@ class Help extends StatelessWidget {
             Text(
               'Live Camera',
               style: TextStyle(fontSize: 23, fontWeight: FontWeight.bold),
+              textScaleFactor: ScaleSize.textScaleFactor(context),
             ),
             SizedBox(
               height: 5,
             ),
             Text.rich(
               textAlign: TextAlign.justify,
+              textScaleFactor: ScaleSize.textScaleFactor(context),
               TextSpan(
                 style: TextStyle(
                   fontSize: 16,
@@ -38,12 +51,14 @@ class Help extends StatelessWidget {
                 children: [
                   TextSpan(
                     text: 'Step 1: ',
-                    style: TextStyle(fontWeight: FontWeight.bold),
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                   TextSpan(
                     text:
                         'Select the "Live Camera" button to open the camera directly from your mobile device, and live descriptions will be generated directly below the camera frame.',
-                  )
+                  ),
                 ],
               ),
             ),
@@ -53,12 +68,14 @@ class Help extends StatelessWidget {
             Text(
               'Camera Roll',
               style: TextStyle(fontSize: 23, fontWeight: FontWeight.bold),
+              textScaleFactor: ScaleSize.textScaleFactor(context),
             ),
             SizedBox(
               height: 5,
             ),
             Text.rich(
               textAlign: TextAlign.justify,
+              textScaleFactor: ScaleSize.textScaleFactor(context),
               TextSpan(
                 style: TextStyle(
                   fontSize: 16,
@@ -79,6 +96,7 @@ class Help extends StatelessWidget {
               height: 5,
             ),
             Text.rich(
+              textScaleFactor: ScaleSize.textScaleFactor(context),
               textAlign: TextAlign.justify,
               TextSpan(
                 style: TextStyle(
@@ -102,11 +120,13 @@ class Help extends StatelessWidget {
             Text(
               'Take a Photo',
               style: TextStyle(fontSize: 23, fontWeight: FontWeight.bold),
+              textScaleFactor: ScaleSize.textScaleFactor(context),
             ),
             SizedBox(
               height: 5,
             ),
             Text.rich(
+              textScaleFactor: ScaleSize.textScaleFactor(context),
               textAlign: TextAlign.justify,
               TextSpan(
                 style: TextStyle(
@@ -128,6 +148,7 @@ class Help extends StatelessWidget {
               height: 5,
             ),
             Text.rich(
+              textScaleFactor: ScaleSize.textScaleFactor(context),
               textAlign: TextAlign.justify,
               TextSpan(
                 style: TextStyle(
@@ -149,6 +170,7 @@ class Help extends StatelessWidget {
               height: 5,
             ),
             Text.rich(
+              textScaleFactor: ScaleSize.textScaleFactor(context),
               textAlign: TextAlign.justify,
               TextSpan(
                 style: TextStyle(
