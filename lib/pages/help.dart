@@ -30,21 +30,21 @@ class Help extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SizedBox(
+            const SizedBox(
               height: 5,
             ),
             Text(
               'Live Camera',
-              style: TextStyle(fontSize: 23, fontWeight: FontWeight.bold),
+              style: const TextStyle(fontSize: 23, fontWeight: FontWeight.bold),
               textScaleFactor: ScaleSize.textScaleFactor(context),
             ),
-            SizedBox(
+            const SizedBox(
               height: 5,
             ),
             Text.rich(
               textAlign: TextAlign.justify,
               textScaleFactor: ScaleSize.textScaleFactor(context),
-              TextSpan(
+              const TextSpan(
                 style: TextStyle(
                   fontSize: 16,
                 ),
@@ -62,21 +62,21 @@ class Help extends StatelessWidget {
                 ],
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 5,
             ),
             Text(
               'Camera Roll',
-              style: TextStyle(fontSize: 23, fontWeight: FontWeight.bold),
+              style: const TextStyle(fontSize: 23, fontWeight: FontWeight.bold),
               textScaleFactor: ScaleSize.textScaleFactor(context),
             ),
-            SizedBox(
+            const SizedBox(
               height: 5,
             ),
             Text.rich(
               textAlign: TextAlign.justify,
               textScaleFactor: ScaleSize.textScaleFactor(context),
-              TextSpan(
+              const TextSpan(
                 style: TextStyle(
                   fontSize: 16,
                 ),
@@ -92,13 +92,13 @@ class Help extends StatelessWidget {
                 ],
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 5,
             ),
             Text.rich(
               textScaleFactor: ScaleSize.textScaleFactor(context),
               textAlign: TextAlign.justify,
-              TextSpan(
+              const TextSpan(
                 style: TextStyle(
                   fontSize: 16,
                 ),
@@ -114,21 +114,21 @@ class Help extends StatelessWidget {
                 ],
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 5,
             ),
             Text(
               'Take a Photo',
-              style: TextStyle(fontSize: 23, fontWeight: FontWeight.bold),
+              style: const TextStyle(fontSize: 23, fontWeight: FontWeight.bold),
               textScaleFactor: ScaleSize.textScaleFactor(context),
             ),
-            SizedBox(
+            const SizedBox(
               height: 5,
             ),
             Text.rich(
               textScaleFactor: ScaleSize.textScaleFactor(context),
               textAlign: TextAlign.justify,
-              TextSpan(
+              const TextSpan(
                 style: TextStyle(
                   fontSize: 16,
                 ),
@@ -144,13 +144,13 @@ class Help extends StatelessWidget {
                 ],
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 5,
             ),
             Text.rich(
               textScaleFactor: ScaleSize.textScaleFactor(context),
               textAlign: TextAlign.justify,
-              TextSpan(
+              const TextSpan(
                 style: TextStyle(
                   fontSize: 16,
                 ),
@@ -166,13 +166,13 @@ class Help extends StatelessWidget {
                 ],
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 5,
             ),
             Text.rich(
               textScaleFactor: ScaleSize.textScaleFactor(context),
               textAlign: TextAlign.justify,
-              TextSpan(
+              const TextSpan(
                 style: TextStyle(
                   fontSize: 16,
                 ),

@@ -93,7 +93,7 @@ class _GnerateLiveCaptionsState extends State<GnerateLiveCaptions> {
     }
     if (takephoto) {
       try {
-        // await _initializeControllerFuture;
+        await _initializeControllerFuture;
         final image = await controller.takePicture();
         if (!mounted) {
           return;
@@ -102,7 +102,7 @@ class _GnerateLiveCaptionsState extends State<GnerateLiveCaptions> {
         File imgfile = File(image.path);
         fetchResponse(imgfile);
       } catch (e) {
-        print(e);
+        //nothing
       } finally {
         capturingInProgress = false;
       }
@@ -145,11 +145,12 @@ class _GnerateLiveCaptionsState extends State<GnerateLiveCaptions> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: FutureBuilder(
+      body: FutureBuilder<void>(
           future: _initializeControllerFuture,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.done) {
               return Container(
+                height: double.infinity,
                 decoration: const BoxDecoration(
                   gradient: LinearGradient(
                     begin: Alignment.topCenter,
@@ -161,36 +162,34 @@ class _GnerateLiveCaptionsState extends State<GnerateLiveCaptions> {
                     ],
                   ),
                 ),
-                child: Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Container(
-                        padding: const EdgeInsets.only(top: 35),
-                        child: IconButton(
-                          color: Colors.white,
-                          icon: const Icon(Icons.arrow_back_ios),
-                          onPressed: () {
-                            setState(() {
-                              takephoto = false;
-                            });
-                            Navigator.pop(context);
-                          },
-                        ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Container(
+                      padding: const EdgeInsets.only(top: 35),
+                      child: IconButton(
+                        color: Colors.white,
+                        icon: const Icon(Icons.arrow_back_ios),
+                        onPressed: () {
+                          setState(() {
+                            takephoto = false;
+                          });
+                          Navigator.pop(context);
+                        },
                       ),
-                      Center(child: buildCameraPreview())
-                    ],
-                  ),
+                    ),
+                    Center(child: buildCameraPreview(controller))
+                  ],
                 ),
               );
             } else {
-              return Container();
+              return const Center(child: CircularProgressIndicator());
             }
           }),
     );
   }
 
-  Widget buildCameraPreview() {
+  Widget buildCameraPreview(controller) {
     var size = MediaQuery.of(context).size.width / 1.2;
 
     return Column(
@@ -210,7 +209,7 @@ class _GnerateLiveCaptionsState extends State<GnerateLiveCaptions> {
             ),
             Text(
               'prediction is: \n',
-              style: TextStyle(
+              style: const TextStyle(
                 color: Colors.white,
                 fontWeight: FontWeight.w900,
                 fontSize: 25,

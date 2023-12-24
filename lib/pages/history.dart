@@ -30,8 +30,6 @@ class History extends StatelessWidget {
       body: FutureBuilder<QuerySnapshot>(
         future: predictsRef.orderBy('time', descending: true).get(),
         builder: (context, snapshot) {
-          print(deviceId);
-
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           }

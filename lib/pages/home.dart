@@ -200,7 +200,7 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
           child: Column(
             // crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-              const SizedBox(height: 40),
+              const SizedBox(height: 60),
               Column(
                 children: [
                   Text(
@@ -223,9 +223,9 @@ class _HomeState extends State<Home> with TickerProviderStateMixin {
                   ),
                 ],
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 40),
               Container(
-                height: MediaQuery.of(context).size.height - 200,
+                height: MediaQuery.of(context).size.height * 0.68,
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
                     color: Colors.white,

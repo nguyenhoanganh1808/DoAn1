@@ -27,7 +27,7 @@ class ImageDisplay extends StatelessWidget {
               const SizedBox(height: 40),
               Text(
                 'text generator',
-                style: TextStyle(
+                style: const TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
                   fontSize: 35,
@@ -36,7 +36,7 @@ class ImageDisplay extends StatelessWidget {
               ),
               Text(
                 'image to text generator',
-                style: TextStyle(
+                style: const TextStyle(
                     color: Colors.white,
                     fontSize: 18,
                     fontWeight: FontWeight.bold),

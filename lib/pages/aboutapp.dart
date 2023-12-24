@@ -89,7 +89,7 @@ class AboutApp extends StatelessWidget {
                 Container(
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(30),
-                      color: Color.fromARGB(255, 104, 234, 154)),
+                      color: const Color.fromARGB(255, 104, 234, 154)),
                   height: 180,
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 20),
